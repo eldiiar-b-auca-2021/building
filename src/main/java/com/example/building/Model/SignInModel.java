@@ -8,6 +8,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Data
 public class SignInModel {
-    private String username;
+    private String email;
     private String password;
 }

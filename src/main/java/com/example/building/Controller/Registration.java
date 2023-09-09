@@ -1,40 +1,40 @@
 package com.example.building.Controller;
 
+import com.example.building.Configuration.JwtFilter;
 import com.example.building.Model.SignInModel;
-import lombok.AllArgsConstructor;
+import com.example.building.Service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
-
+import javax.validation.constraints.NotNull;
 
 @RestController
-//@AllArgsConstructor
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class Registration {
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationService authenticationService;
+    private final JwtFilter jwtFilter;
+    @PostMapping("/google")
+    public ResponseEntity<String> startGoogleLogin(@RequestBody SignInModel signInModel) throws Exception {
+        authenticationService.registerUser(signInModel);
+        return ResponseEntity.ok("Google login initiated.");
+    }
     @PostMapping("/signin")
-    public ResponseEntity<Object> authenticate(@RequestBody @NotNull SignInModel signInModel) {
-
-        try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInModel.getUsername(), signInModel.getPassword()));
-            if (authentication.isAuthenticated()) {
-                return ResponseEntity.ok("User authenticated successfully!");
-            }
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed: " + e.getMessage());
+    public ResponseEntity<Object> authenticate(@RequestBody @NotNull SignInModel signInModel) throws Exception {
+        if (authenticationService.authenticateUser(signInModel)) {
+            return  ResponseEntity.ok(jwtFilter.generateToken(signInModel.getEmail()));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed.");
     }
+    @PostMapping("/signup")
+    public ResponseEntity<Object> register(@RequestBody @NotNull SignInModel signInModel) throws Exception {
+        authenticationService.registerUser(signInModel);
+        return ResponseEntity.ok("You are successfully registered!");
+    }
     @GetMapping("/d")
     public String get(){
-        return "helloo";
+        return "hello";
     }
 
 
