@@ -8,6 +8,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 public class ClientOfBuilding implements Serializable {
 
@@ -31,6 +33,26 @@ public class ClientOfBuilding implements Serializable {
     @NaturalId
     @Column(length = 50)
     private RoleName name;
+
+    private String resetToken;
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public LocalDateTime getResetTokenExpireTime() {
+        return resetTokenExpireTime;
+    }
+
+    public void setResetTokenExpireTime(LocalDateTime resetTokenExpireTime) {
+        this.resetTokenExpireTime = resetTokenExpireTime;
+    }
+
+    private LocalDateTime resetTokenExpireTime;
 
     public ClientOfBuilding(){
 
